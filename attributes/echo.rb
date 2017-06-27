@@ -7,4 +7,4 @@
 
 default['nginx']['echo']['version']        = '0.40'
 default['nginx']['echo']['url']            = "https://github.com/agentzh/echo-nginx-module/tarball/v#{node['nginx']['echo']['version']}"
-default['nginx']['echo']['checksum']       = '26ae7f7381d52d6aa5021dfc39a1862fd081d580166343f671d0920ed239ab41'
+default['nginx']['echo']['checksum']       = '96bb3ae2572335c95d0e15c94788c519a293af5156dc77a5da1551add05648dc'
