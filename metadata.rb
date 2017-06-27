@@ -3,7 +3,7 @@ maintainer        "Opscode, Inc."
 maintainer_email  "cookbooks@opscode.com"
 license           "Apache 2.0"
 description       "Installs and configures nginx"
-version           "1.8.0"
+version           "1.8.1"
 
 recipe "nginx", "Installs nginx package and sets up configuration with Debian apache style with sites-enabled/sites-available"
 recipe "nginx::source", "Installs nginx from source and sets up configuration with Debian apache style with sites-enabled/sites-available"
@@ -12,7 +12,7 @@ recipe "nginx::source", "Installs nginx from source and sets up configuration wi
   supports os
 end
 
-%w{ build-essential yum apt runit }.each do |cb|
+%w{ build-essential yum yum-epel apt runit }.each do |cb|
   depends cb
 end
 
