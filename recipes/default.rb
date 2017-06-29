@@ -42,6 +42,7 @@ when 'package'
   service 'nginx' do
     supports :status => true, :restart => true, :reload => true
     action :enable
+    not_if node['platform_family'].eql? 'mac_os_x'
   end
   include_recipe 'nginx::commons'
 end
@@ -49,4 +50,5 @@ end
 service 'nginx' do
   supports :status => true, :restart => true, :reload => true
   action :start
+  not_if node['platform_family'].eql? 'mac_os_x'
 end
