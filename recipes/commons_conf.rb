@@ -22,7 +22,7 @@ template "nginx.conf" do
   path "#{node['nginx']['dir']}/nginx.conf"
   source "nginx.conf.erb"
   owner "root"
-  group "root"
+  group node['root_group']
   mode 00644
   notifies :reload, 'service[nginx]'
 end
@@ -30,7 +30,7 @@ end
 template "#{node['nginx']['dir']}/sites-available/default" do
   source "default-site.erb"
   owner "root"
-  group "root"
+  group node['root_group']
   mode 00644
   notifies :reload, 'service[nginx]'
 end

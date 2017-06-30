@@ -27,7 +27,7 @@ remote_file upm_src_filepath do
   source node['nginx']['upload_progress']['url']
   checksum node['nginx']['upload_progress']['checksum']
   owner "root"
-  group "root"
+  group node['root_group']
   mode 00644
 end
 

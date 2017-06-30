@@ -23,6 +23,6 @@
     source "#{nxscript}.erb"
     mode 00755
     owner "root"
-    group "root"
+    group node['root_group']
   end
 end
