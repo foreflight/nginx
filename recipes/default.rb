@@ -39,16 +39,19 @@ when 'package'
     end
   end
   package node['nginx']['package_name']
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action :enable
-    not_if node['platform_family'].eql? 'mac_os_x'
+
+  unless node['platform_family'].eql? 'mac_os_x' do
+    service 'nginx' do
+      supports :status => true, :restart => true, :reload => true
+      action :enable
+      not_if
+    end
   end
+
   include_recipe 'nginx::commons'
 end
 
 service 'nginx' do
   supports :status => true, :restart => true, :reload => true
   action :start
-  not_if node['platform_family'].eql? 'mac_os_x'
 end
