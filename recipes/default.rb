@@ -40,7 +40,7 @@ when 'package'
   end
   package node['nginx']['package_name']
 
-  unless node['platform_family'].eql? 'mac_os_x' do
+  unless node['platform_family'].eql? 'mac_os_x'
     service 'nginx' do
       supports :status => true, :restart => true, :reload => true
       action :enable
