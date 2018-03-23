@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Recipe:: http_stub_status_module
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Jamie Winsor (<jamie@vialstudios.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2012-2013, Riot Games
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,18 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
+include_recipe 'chef_nginx::authorized_ips'
 
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
+template 'nginx_status' do
+  path "#{node['nginx']['dir']}/sites-available/nginx_status"
+  source 'modules/nginx_status.erb'
+  owner  'root'
+  group  node['root_group']
+  mode   '0644'
+  notifies node['nginx']['notify_cmd'], 'service[nginx]', :delayed
 end
 
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+nginx_site 'nginx_status'
+
+node.run_state['nginx_configure_flags'] =
+  node.run_state['nginx_configure_flags'] | ['--with-http_stub_status_module']

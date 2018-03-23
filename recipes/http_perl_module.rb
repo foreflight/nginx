@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Recipe:: http_perl_module
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Akzhan Abdulin (<akzhan.abdulin@gmail.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2012-2013, REG.RU
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,5 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+node.run_state['nginx_configure_flags'] =
+  node.run_state['nginx_configure_flags'] | ['--with-http_perl_module']

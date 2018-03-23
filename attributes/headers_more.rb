@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Attributes:: headers_more
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Lucas Jandrew (<ljandrew@riotgames.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2012-2013, Riot Games
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,6 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+default['nginx']['headers_more']['version']         = '0.25'
+default['nginx']['headers_more']['source_url']      = "https://github.com/openresty/headers-more-nginx-module/archive/v#{node['nginx']['headers_more']['version']}.tar.gz"
+default['nginx']['headers_more']['source_checksum'] = '1473f96f59dcec9d83ce65d691559993c1f80da8c0a4c0c0a30dae9f969eeabf'

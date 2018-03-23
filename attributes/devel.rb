@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Attributes:: devel
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Arthur Freyman (<afreyman@riotgames.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2013, Riot Games
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,6 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+default['nginx']['devel']['version']  = '0.2.18'
+default['nginx']['devel']['url']      = "https://github.com/simpl/ngx_devel_kit/archive/v#{node['nginx']['devel']['version']}.tar.gz"
+default['nginx']['devel']['checksum'] = 'c9c9f0a1b068d38c6c45b15d9605f1b2344dbcd45abf0764cd8e2ba92d6a3d2c'

@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Recipe:: commons
 #
 # Author:: AJ Christensen <aj@junglist.gen.nz>
 #
@@ -19,17 +19,6 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+include_recipe 'chef_nginx::commons_dir'
+include_recipe 'chef_nginx::commons_script'
+include_recipe 'chef_nginx::commons_conf'

@@ -1,10 +1,11 @@
+
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Attributes:: syslog
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Bob Ziuchkovski (<bob@bz-technology.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2014, UserTesting
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +20,5 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+default['nginx']['syslog']['git_repo']     = 'https://github.com/yaoweibin/nginx_syslog_patch.git'
+default['nginx']['syslog']['git_revision'] = 'master'

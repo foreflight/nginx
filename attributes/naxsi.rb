@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Attributes:: naxsi
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Artiom Lunev (<artiom.lunev@gmail.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2012-2013, Artiom Lunev
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,6 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+default['nginx']['naxsi']['version'] = '0.53-2'
+default['nginx']['naxsi']['url'] = "https://github.com/nbs-system/naxsi/archive/#{node['nginx']['naxsi']['version']}.tar.gz"
+default['nginx']['naxsi']['checksum'] = '3eadff1d91995beae41b92733ade28091c2075a24ae37058f4d6aa90b0f4b660'

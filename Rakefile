@@ -1,17 +1,7 @@
-#!/usr/bin/env rake
-
-require 'foodcritic'
-require 'rake/clean'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
-
-load './test/circle_parallel.rake'
-
-CLEAN.include %w(.kitchen/ coverage/ doc/)
-CLOBBER.include %w(Berksfile.lock Gemfile.lock .yardoc/)
-
-# Default tasks to run when executing `rake`
-task default: %w(style spec)
+require 'foodcritic'
+require 'kitchen'
 
 # Style tests. Rubocop and Foodcritic
 namespace :style do
@@ -20,20 +10,54 @@ namespace :style do
 
   desc 'Run Chef style checks'
   FoodCritic::Rake::LintTask.new(:chef) do |t|
-    t.options = { fail_tags: ['any'] }
+    t.options = {
+      fail_tags: ['any'],
+      tags: [
+        '~FC005',
+        '~FC015',
+        '~FC023'
+      ]
+    }
   end
 end
 
 desc 'Run all style checks'
-task style: ['style:chef', 'style:ruby']
+task style: ['style:ruby', 'style:chef']
 
 # Rspec and ChefSpec
 desc 'Run ChefSpec examples'
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.verbose = false
+RSpec::Core::RakeTask.new(:spec)
+
+# Integration tests. Kitchen.ci
+namespace :integration do
+  desc 'Run Test Kitchen with Vagrant'
+  task :vagrant do
+    Kitchen.logger = Kitchen.default_file_logger
+    Kitchen::Config.new.instances.each do |instance|
+      instance.test(:always)
+    end
+  end
+
+  desc 'Run Test Kitchen with cloud plugins'
+  task :cloud do
+    run_kitchen = true
+    if ENV['TRAVIS'] == 'true' && ENV['TRAVIS_PULL_REQUEST'] != 'false'
+      run_kitchen = false
+    end
+
+    if run_kitchen
+      Kitchen.logger = Kitchen.default_file_logger
+      @loader = Kitchen::Loader::YAML.new(project_config: './.kitchen.cloud.yml')
+      config = Kitchen::Config.new(loader: @loader)
+      config.instances.each do |instance|
+        instance.test(:always)
+      end
+    end
+  end
 end
 
-desc 'Find notes in code'
-task :notes do
-  puts `egrep --exclude=Rakefile --exclude=*.log -n -r -i '(TODO|FIXME|OPTIMIZE)' .`
-end
+desc 'Run all tests on Travis'
+task travis: ['style', 'spec', 'integration:cloud']
+
+# Default
+task default: ['style', 'spec', 'integration:vagrant']

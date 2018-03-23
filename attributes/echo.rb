@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Attributes:: echo
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Danial Pearce (<github@tigris.id.au>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2013, Danial Pearce
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,6 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
-end
-
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
+default['nginx']['echo']['version']        = '0.57'
+default['nginx']['echo']['url']            = "https://github.com/openresty/echo-nginx-module/archive/v#{node['nginx']['echo']['version']}.tar.gz"
+default['nginx']['echo']['checksum']       = '8467237ca0fae74ca7a32fbd34fc6044df307098415d48068214c9c235695a07'

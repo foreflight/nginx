@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
+# Recipe:: ohai_plugin
 #
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Author:: Jamie Winsor (<jamie@vialstudios.com>)
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2012-2013, Riot Games
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
-
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
-  end
+ohai 'reload_nginx' do
+  plugin 'chef_nginx'
+  action :nothing
 end
 
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
+template "/etc/chef/ohai_plugins/nginx.rb" do
+  source 'plugins/nginx.rb.erb'
+  owner  'root'
+  group  node['root_group']
+  mode   '0755'
+  notifies :reload, 'ohai[reload_nginx]', :immediately
 end
+
+include_recipe 'ohai::default'

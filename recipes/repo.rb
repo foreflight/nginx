@@ -1,8 +1,7 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: default
-#
-# Author:: AJ Christensen <aj@junglist.gen.nz>
+# Recipe:: repo
+# Author:: Nick Rycar <nrycar@bluebox.net>
 #
 # Copyright 2008-2013, Chef Software, Inc.
 #
@@ -19,17 +18,24 @@
 # limitations under the License.
 #
 
-include_recipe "chef_nginx::#{node['nginx']['install_method']}"
+case node['platform_family']
+when 'rhel', 'fedora'
 
-
-
-unless platform_family?('mac_os_x')
-  service 'nginx' do
-    supports :status => true, :restart => true, :reload => true
-    action   :start
+  yum_repository 'nginx' do
+    description 'Nginx.org Repository'
+    baseurl         node['nginx']['upstream_repository']
+    gpgkey      'http://nginx.org/keys/nginx_signing.key'
+    action :create
   end
-end
 
-node['nginx']['default']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
+when 'debian'
+  include_recipe 'apt::default'
+
+  apt_repository 'nginx' do
+    uri          node['nginx']['upstream_repository']
+    distribution node['lsb']['codename']
+    components   %w(nginx)
+    deb_src      true
+    key          'http://nginx.org/keys/nginx_signing.key'
+  end
 end

@@ -1,25 +1,20 @@
 if defined?(ChefSpec)
-  def create_nginx_config(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:nginx_config, :create, resource_name)
-  end
+  # Custom ChefSpec matchers
+  module ChefSpec::Matchers
+    RSpec::Matchers.define :enable_nginx_site do |site|
+      match do |chef_run|
+        chef_run.resource_collection.all_resources.any? do |resource|
+          resource.resource_name == :execute && resource.name =~ /.*nxensite.*#{site}/
+        end
+      end
+    end
 
-  def delete_nginx_config(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:nginx_config, :delete, resource_name)
-  end
-
-  def create_nginx_service(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:nginx_service, :create, resource_name)
-  end
-
-  def delete_nginx_service(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:nginx_service, :delete, resource_name)
-  end
-
-  def reload_nginx_service(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:nginx_service, :reload, resource_name)
-  end
-
-  def restart_nginx_service(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:nginx_service, :restart, resource_name)
+    RSpec::Matchers.define :disable_nginx_site do |site|
+      match do |chef_run|
+        chef_run.resource_collection.all_resources.any? do |resource|
+          resource.resource_name == :execute && resource.name =~ /.*nxdissite.*#{site}/
+        end
+      end
+    end
   end
 end
